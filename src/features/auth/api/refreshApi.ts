@@ -1,4 +1,4 @@
-import { refreshClient } from '../../../services/api/refreshClient'
+import { publicApiClient } from '../../../services/api/publicApiClient'
 
 export type RefreshResponse = {
   message: string
@@ -8,7 +8,7 @@ export type RefreshResponse = {
 }
 
 export async function refreshAccessToken(): Promise<string> {
-  const response = await refreshClient.post<RefreshResponse>(
+  const response = await publicApiClient.post<RefreshResponse>(
     '/auth/refresh',
   )
 

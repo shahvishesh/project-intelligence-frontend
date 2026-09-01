@@ -56,7 +56,7 @@ export function LoginForm() {
 
         {loginMutation.isError && (
           <Alert severity="error">
-            Unable to sign in. Please check your credentials.
+            {loginMutation.error.message}
           </Alert>
         )}
 

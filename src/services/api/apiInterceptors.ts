@@ -4,8 +4,10 @@ import type {
 } from 'axios'
 
 import { apiClient } from './apiClient'
+import { ApiError } from './apiError'
 import { tokenStorage } from '../auth/tokenStorage'
 import { refreshAccessToken } from '../../features/auth/api/refreshApi'
+import { publicApiClient } from './publicApiClient'
 
 type RetryableRequestConfig = AxiosRequestConfig & {
   _retry?: boolean
@@ -26,15 +28,29 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (response) => response,
 
-  async (error: AxiosError) => {
+  async (error: AxiosError<{ message?: string }>) => {
     const originalRequest =
       error.config as RetryableRequestConfig | undefined
+
+      console.log('API ERROR:', {
+  status: error.response?.status,
+  data: error.response?.data,
+})
 
     if (
       error.response?.status !== 401 ||
       !originalRequest
     ) {
-      return Promise.reject(error)
+      const message =
+        error.response?.data?.message ??
+        'Something went wrong'
+
+      const statusCode =
+        error.response?.status ?? 500
+
+      return Promise.reject(
+        new ApiError(message, statusCode),
+      )
     }
 
     if (originalRequest._retry) {
@@ -54,7 +70,9 @@ apiClient.interceptors.response.use(
 
       tokenStorage.setAccessToken(newAccessToken)
 
-      originalRequest.headers = originalRequest.headers ?? {}
+      originalRequest.headers =
+        originalRequest.headers ?? {}
+
       originalRequest.headers.Authorization =
         `Bearer ${newAccessToken}`
 
@@ -66,5 +84,22 @@ apiClient.interceptors.response.use(
     } finally {
       refreshPromise = null
     }
+  },
+)
+
+publicApiClient.interceptors.response.use(
+  (response) => response,
+
+  (error: AxiosError<{ message?: string }>) => {
+    const message =
+      error.response?.data?.message ??
+      'Something went wrong'
+
+    const statusCode =
+      error.response?.status ?? 500
+
+    return Promise.reject(
+      new ApiError(message, statusCode),
+    )
   },
 )
