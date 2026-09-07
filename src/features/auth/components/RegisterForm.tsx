@@ -35,7 +35,12 @@ export function RegisterForm() {
     })
 
     const onSubmit = (data: RegisterRequest) => {
-        registerMutation.mutate(data)
+        registerMutation.mutate({
+            ...data,
+            name: data.name.trim(),
+            email: data.email.trim(),
+            organizationName: data.organizationName.trim(),
+        })
     }
 
     return (
@@ -70,6 +75,9 @@ export function RegisterForm() {
                             fullWidth
                             {...register('name', {
                                 required: 'Name is required',
+                                validate: (value) =>
+                                    value.trim().length > 0 ||
+                                    'Name is required',
                             })}
                             error={!!errors.name}
                             helperText={errors.name?.message}
@@ -81,6 +89,9 @@ export function RegisterForm() {
                             fullWidth
                             {...register('email', {
                                 required: 'Email is required',
+                                validate: (value) =>
+                                    value.trim().length > 0 ||
+                                    'Email is required',
                             })}
                             error={!!errors.email}
                             helperText={errors.email?.message}
@@ -106,6 +117,9 @@ export function RegisterForm() {
                             fullWidth
                             {...register('organizationName', {
                                 required: 'Organization name is required',
+                                validate: (value) =>
+                                    value.trim().length > 0 ||
+                                    'Organization name is required',
                             })}
                             error={!!errors.organizationName}
                             helperText={errors.organizationName?.message}

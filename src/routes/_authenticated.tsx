@@ -1,6 +1,11 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  Outlet,
+  redirect,
+} from '@tanstack/react-router'
 
 import { tokenStorage } from '../services/auth/tokenStorage'
+import { AppLayout } from '../components/layout/AppLayout'
 
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: () => {
@@ -12,4 +17,14 @@ export const Route = createFileRoute('/_authenticated')({
       })
     }
   },
+
+  component: AuthenticatedLayout,
 })
+
+function AuthenticatedLayout() {
+  return (
+    <AppLayout>
+      <Outlet />
+    </AppLayout>
+  )
+}

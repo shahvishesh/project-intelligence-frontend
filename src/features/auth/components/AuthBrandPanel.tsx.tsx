@@ -1,6 +1,6 @@
 import { Box, Stack, Typography } from '@mui/material'
 
-export function LoginBrandPanel() {
+export function AuthBrandPanel() {
   return (
     <Box
       sx={{

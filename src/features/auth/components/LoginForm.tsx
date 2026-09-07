@@ -12,6 +12,7 @@ import { useForm } from 'react-hook-form'
 import { login, type LoginRequest } from '../api/authApi'
 import { tokenStorage } from '../../../services/auth/tokenStorage'
 import { useNavigate } from '@tanstack/react-router'
+import { toast } from 'react-toastify'
 
 export function LoginForm() {
   const {
@@ -28,14 +29,23 @@ export function LoginForm() {
     onSuccess: (response) => {
       tokenStorage.setAccessToken(response.data.accessToken)
 
+      toast.success('Logged in successfully')
+
       navigate({
         to: '/dashboard',
       })
     },
+
+    onError: (error) => {
+      toast.error(error.message)
+    },
   })
 
   const onSubmit = (data: LoginRequest) => {
-    loginMutation.mutate(data)
+    loginMutation.mutate({
+      ...data,
+      email: data.email.trim(),
+    })
   }
 
   return (
@@ -71,6 +81,9 @@ export function LoginForm() {
               fullWidth
               {...register('email', {
                 required: 'Email is required',
+                validate: (value) =>
+                  value.trim().length > 0 ||
+                  'Email is required',
               })}
               error={!!errors.email}
               helperText={errors.email?.message}

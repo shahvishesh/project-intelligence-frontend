@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 
-import { LoginBrandPanel } from './AuthBrandPanel.tsx'
+import { AuthBrandPanel } from './AuthBrandPanel.tsx'
 
 interface AuthLayoutProps {
   children: React.ReactNode
@@ -20,7 +20,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
           flex: 1,
         }}
       >
-        <LoginBrandPanel />
+        <AuthBrandPanel />
       </Box>
 
       <Box

@@ -32,11 +32,6 @@ apiClient.interceptors.response.use(
     const originalRequest =
       error.config as RetryableRequestConfig | undefined
 
-      console.log('API ERROR:', {
-  status: error.response?.status,
-  data: error.response?.data,
-})
-
     if (
       error.response?.status !== 401 ||
       !originalRequest
