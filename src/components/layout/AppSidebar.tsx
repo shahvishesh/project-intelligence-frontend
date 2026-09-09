@@ -21,6 +21,10 @@ const navigationItems = [
     to: '/members',
     permission: 'MEMBER_VIEW',
   },
+  {
+    label: 'Projects',
+    to: '/projects',
+  },
 ] as const
 
 export function AppSidebar() {
