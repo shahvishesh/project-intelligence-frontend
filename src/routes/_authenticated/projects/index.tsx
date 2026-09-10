@@ -1,5 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
-import { createFileRoute } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  useNavigate,
+} from '@tanstack/react-router'
 import {
   Box,
   Chip,
@@ -13,9 +16,11 @@ import {
   TableRow,
   Tooltip,
   Typography,
+  IconButton,
 } from '@mui/material'
-
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
 import {
+  dataTableActionsCellSx,
   dataTableContainerSx,
   dataTableEmptyStateCellSx,
   dataTableHeadRowSx,
@@ -35,6 +40,8 @@ export const Route = createFileRoute(
 })
 
 function ProjectsPage() {
+  const navigate = useNavigate()
+
   const projectsQuery = useQuery({
     queryKey: ['projects'],
     queryFn: getProjects,
@@ -96,6 +103,9 @@ function ProjectsPage() {
                   <TableCell>Status</TableCell>
                   <TableCell>Start date</TableCell>
                   <TableCell>End date</TableCell>
+                  <TableCell sx={dataTableActionsCellSx}>
+                    Actions
+                  </TableCell>
                 </TableRow>
               </TableHead>
 
@@ -154,9 +164,27 @@ function ProjectsPage() {
                     <TableCell>
                       {project.endDate
                         ? new Date(
-                            project.endDate,
-                          ).toLocaleDateString()
+                          project.endDate,
+                        ).toLocaleDateString()
                         : '—'}
+                    </TableCell>
+                    <TableCell sx={dataTableActionsCellSx}>
+                      <Tooltip title="View project">
+                        <IconButton
+                          onClick={() =>
+                            navigate({
+                              to: '/projects/$projectId',
+                              params: {
+                                projectId: String(project.id),
+                              },
+                            })
+                          }
+                          size="small"
+                          aria-label={`View ${project.name}`}
+                        >
+                          <VisibilityOutlinedIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -164,7 +192,7 @@ function ProjectsPage() {
                 {projectsQuery.data.length === 0 && (
                   <TableRow>
                     <TableCell
-                      colSpan={5}
+                      colSpan={6}
                       align="center"
                       sx={dataTableEmptyStateCellSx}
                     >
