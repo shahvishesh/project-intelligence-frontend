@@ -23,6 +23,7 @@ import {
 } from "../../../components/page/pageStyles";
 import { getProject } from "../../../features/projects/api/projectApi";
 import { ProjectMembersDialog } from "../../../features/projects/components/ProjectMembersDialog";
+import { useProjectAccess } from "../../../features/projects/hooks/useProjectAccess";
 
 export const Route = createFileRoute("/_authenticated/projects/$projectId")({
   component: ProjectDetailsPage,
@@ -53,6 +54,14 @@ function ProjectDetailsPage() {
       </Box>
     );
   }
+
+  const projectAccessQuery = useProjectAccess(Number(projectId));
+
+  const canUpdate = projectAccessQuery.can("PROJECT_UPDATE");
+
+  const canManageMembers = projectAccessQuery.can("PROJECT_MANAGE_MEMBERS");
+
+  const canDelete = projectAccessQuery.can("PROJECT_DELETE");
 
   const project = projectQuery.data;
   const startDate = new Date(project.startDate).toLocaleDateString();
