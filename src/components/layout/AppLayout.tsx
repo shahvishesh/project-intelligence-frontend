@@ -1,15 +1,13 @@
-import { Box } from '@mui/material'
+import { Box } from '@mui/material';
 
-import { AppNavbar } from './AppNavbar'
-import { AppSidebar } from './AppSidebar'
+import { AppNavbar } from './AppNavbar';
+import { AppSidebar } from './AppSidebar';
 
 interface AppLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
-export function AppLayout({
-  children,
-}: AppLayoutProps) {
+export function AppLayout({ children }: AppLayoutProps) {
   return (
     <Box
       sx={{
@@ -41,5 +39,5 @@ export function AppLayout({
         </Box>
       </Box>
     </Box>
-  )
+  );
 }

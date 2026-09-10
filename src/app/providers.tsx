@@ -1,12 +1,12 @@
-import { QueryClientProvider } from '@tanstack/react-query'
-import type { ReactNode } from 'react'
-import { queryClient } from './queryClient'
-import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
+import { QueryClientProvider } from '@tanstack/react-query';
+import type { ReactNode } from 'react';
+import { queryClient } from './queryClient';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 type AppProvidersProps = {
-  children: ReactNode
-}
+  children: ReactNode;
+};
 
 export function AppProviders({ children }: AppProvidersProps) {
   return (
@@ -23,5 +23,5 @@ export function AppProviders({ children }: AppProvidersProps) {
         pauseOnHover
       />
     </QueryClientProvider>
-  )
+  );
 }

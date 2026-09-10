@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from 'axios';
 
 export const publicApiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -6,4 +6,4 @@ export const publicApiClient = axios.create({
     'Content-Type': 'application/json',
   },
   withCredentials: true,
-})
+});

@@ -1,9 +1,9 @@
-import { Box } from '@mui/material'
+import { Box } from '@mui/material';
 
-import { AuthBrandPanel } from './AuthBrandPanel.tsx'
+import { AuthBrandPanel } from './AuthBrandPanel.tsx';
 
 interface AuthLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export function AuthLayout({ children }: AuthLayoutProps) {
@@ -36,5 +36,5 @@ export function AuthLayout({ children }: AuthLayoutProps) {
         {children}
       </Box>
     </Box>
-  )
+  );
 }

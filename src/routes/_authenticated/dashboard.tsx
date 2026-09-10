@@ -1,9 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { Box, Typography } from '@mui/material'
+import { createFileRoute } from '@tanstack/react-router';
+import { Box, Typography } from '@mui/material';
 
 export const Route = createFileRoute('/_authenticated/dashboard')({
   component: DashboardPage,
-})
+});
 
 function DashboardPage() {
   return (
@@ -12,13 +12,9 @@ function DashboardPage() {
         Dashboard
       </Typography>
 
-      <Typography
-        variant="body1"
-        color="text.secondary"
-        sx={{ mt: 1 }}
-      >
+      <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
         Welcome to Project Intelligence.
       </Typography>
     </Box>
-  )
+  );
 }

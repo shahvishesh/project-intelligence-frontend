@@ -1,15 +1,7 @@
-import {
-  Box,
-  List,
-  ListItemButton,
-  ListItemText,
-} from '@mui/material'
-import {
-  Link,
-  useMatchRoute,
-} from '@tanstack/react-router'
+import { Box, List, ListItemButton, ListItemText } from '@mui/material';
+import { Link, useMatchRoute } from '@tanstack/react-router';
 
-import { useAuthorization } from '../../features/auth/hooks/useAuthorization'
+import { useAuthorization } from '../../features/auth/hooks/useAuthorization';
 
 const navigationItems = [
   {
@@ -21,11 +13,11 @@ const navigationItems = [
     to: '/members',
     permission: 'MEMBER_VIEW',
   },
-] as const
+] as const;
 
 export function AppSidebar() {
-  const matchRoute = useMatchRoute()
-  const { can } = useAuthorization()
+  const matchRoute = useMatchRoute();
+  const { can } = useAuthorization();
 
   const itemSx = {
     mx: 1,
@@ -64,7 +56,7 @@ export function AppSidebar() {
     '&.Mui-selected .MuiListItemText-primary': {
       fontWeight: 600,
     },
-  }
+  };
 
   return (
     <Box
@@ -79,11 +71,8 @@ export function AppSidebar() {
     >
       <List sx={{ py: 1 }}>
         {navigationItems.map((item) => {
-          if (
-            'permission' in item &&
-            !can(item.permission)
-          ) {
-            return null
+          if ('permission' in item && !can(item.permission)) {
+            return null;
           }
 
           const isActive = Boolean(
@@ -91,7 +80,7 @@ export function AppSidebar() {
               to: item.to,
               fuzzy: true,
             }),
-          )
+          );
 
           return (
             <ListItemButton
@@ -101,13 +90,11 @@ export function AppSidebar() {
               selected={isActive}
               sx={itemSx}
             >
-              <ListItemText
-                primary={item.label}
-              />
+              <ListItemText primary={item.label} />
             </ListItemButton>
-          )
+          );
         })}
       </List>
     </Box>
-  )
+  );
 }
