@@ -14,6 +14,7 @@ import {
   Tooltip,
   Typography,
   IconButton,
+  Button,
 } from "@mui/material";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import {
@@ -30,6 +31,7 @@ import {
 } from "../../../components/page/pageStyles";
 import { getProjects } from "../../../features/projects/api/projectApi";
 import { getProjectStatusColor } from "../../../features/projects/utils/projectStatus";
+import { useAuthorization } from "../../../features/auth/hooks/useAuthorization";
 
 export const Route = createFileRoute("/_authenticated/projects/")({
   component: ProjectsPage,
@@ -37,6 +39,7 @@ export const Route = createFileRoute("/_authenticated/projects/")({
 
 function ProjectsPage() {
   const navigate = useNavigate();
+  const { can } = useAuthorization();
 
   const projectsQuery = useQuery({
     queryKey: ["projects"],
@@ -46,14 +49,36 @@ function ProjectsPage() {
   return (
     <Box>
       <Paper variant="outlined" sx={pageHeaderPaperSx}>
-        <Stack spacing={0.25}>
-          <Typography variant="h5" sx={pageHeaderTitleSx}>
-            Projects
-          </Typography>
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{
+            alignItems: "flex-start",
+            justifyContent: "space-between",
+          }}
+        >
+          <Stack spacing={0.25}>
+            <Typography variant="h5" sx={pageHeaderTitleSx}>
+              Projects
+            </Typography>
 
-          <Typography variant="body2" color="text.secondary">
-            View and manage your projects.
-          </Typography>
+            <Typography variant="body2" color="text.secondary">
+              View and manage your projects.
+            </Typography>
+          </Stack>
+
+          {can("PROJECT_CREATE") && (
+            <Button
+              variant="contained"
+              onClick={() =>
+                navigate({
+                  to: "/projects/create",
+                })
+              }
+            >
+              Create project
+            </Button>
+          )}
         </Stack>
       </Paper>
 

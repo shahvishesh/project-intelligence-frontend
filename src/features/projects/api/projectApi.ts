@@ -170,3 +170,50 @@ export async function getAvailableProjectMembers(
 
   return response.data.data;
 }
+
+export interface CreateProjectRequest {
+  name: string;
+  description?: string;
+  startDate: string;
+  endDate?: string;
+  projectManagers?: number[];
+  projectMembers?: number[];
+}
+
+export interface CreatedProject {
+  id: number;
+  name: string;
+  description: string | null;
+  status: string;
+  startDate: string;
+  endDate: string | null;
+  organizationId: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateProjectResponse {
+  message: string;
+  data: CreatedProject;
+}
+
+export async function createProject(
+  data: CreateProjectRequest,
+): Promise<CreatedProject> {
+  const response = await apiClient.post<CreateProjectResponse>(
+    "/projects/create",
+    data,
+  );
+
+  return response.data.data;
+}
+
+export async function getCreateProjectAvailableMembers(): Promise<
+  AvailableProjectMember[]
+> {
+  const response = await apiClient.get<AvailableProjectMembersResponse>(
+    "/projects/available-members",
+  );
+
+  return response.data.data;
+}
