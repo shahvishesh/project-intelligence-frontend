@@ -1,8 +1,5 @@
-import { useQuery } from '@tanstack/react-query'
-import {
-  createFileRoute,
-  useNavigate,
-} from '@tanstack/react-router'
+import { useQuery } from "@tanstack/react-query";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
   Box,
   Chip,
@@ -17,84 +14,64 @@ import {
   Tooltip,
   Typography,
   IconButton,
-} from '@mui/material'
-import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
+} from "@mui/material";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import {
   dataTableActionsCellSx,
   dataTableContainerSx,
   dataTableEmptyStateCellSx,
   dataTableHeadRowSx,
   dataTablePrimaryCellSx,
-} from '../../../components/table/tableStyles'
+} from "../../../components/table/tableStyles";
 import {
   pageContentPaperSx,
   pageHeaderPaperSx,
   pageHeaderTitleSx,
-} from '../../../components/page/pageStyles'
-import { getProjects } from '../../../features/projects/api/projectApi'
+} from "../../../components/page/pageStyles";
+import { getProjects } from "../../../features/projects/api/projectApi";
+import { getProjectStatusColor } from "../../../features/projects/utils/projectStatus";
 
-export const Route = createFileRoute(
-  '/_authenticated/projects/',
-)({
+export const Route = createFileRoute("/_authenticated/projects/")({
   component: ProjectsPage,
-})
+});
 
 function ProjectsPage() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const projectsQuery = useQuery({
-    queryKey: ['projects'],
+    queryKey: ["projects"],
     queryFn: getProjects,
-  })
+  });
 
   return (
     <Box>
-      <Paper
-        variant="outlined"
-        sx={pageHeaderPaperSx}
-      >
+      <Paper variant="outlined" sx={pageHeaderPaperSx}>
         <Stack spacing={0.25}>
-          <Typography
-            variant="h5"
-            sx={pageHeaderTitleSx}
-          >
+          <Typography variant="h5" sx={pageHeaderTitleSx}>
             Projects
           </Typography>
 
-          <Typography
-            variant="body2"
-            color="text.secondary"
-          >
+          <Typography variant="body2" color="text.secondary">
             View and manage your projects.
           </Typography>
         </Stack>
       </Paper>
 
-      <Paper
-        variant="outlined"
-        sx={pageContentPaperSx}
-      >
+      <Paper variant="outlined" sx={pageContentPaperSx}>
         {projectsQuery.isPending && (
           <Box sx={{ p: 3 }}>
-            <Typography color="text.secondary">
-              Loading projects...
-            </Typography>
+            <Typography color="text.secondary">Loading projects...</Typography>
           </Box>
         )}
 
         {projectsQuery.isError && (
           <Box sx={{ p: 3 }}>
-            <Typography color="error">
-              {projectsQuery.error.message}
-            </Typography>
+            <Typography color="error">{projectsQuery.error.message}</Typography>
           </Box>
         )}
 
         {projectsQuery.data && (
-          <TableContainer
-            component={Box}
-            sx={dataTableContainerSx}
-          >
+          <TableContainer component={Box} sx={dataTableContainerSx}>
             <Table>
               <TableHead>
                 <TableRow sx={dataTableHeadRowSx}>
@@ -103,21 +80,14 @@ function ProjectsPage() {
                   <TableCell>Status</TableCell>
                   <TableCell>Start date</TableCell>
                   <TableCell>End date</TableCell>
-                  <TableCell sx={dataTableActionsCellSx}>
-                    Actions
-                  </TableCell>
+                  <TableCell sx={dataTableActionsCellSx}>Actions</TableCell>
                 </TableRow>
               </TableHead>
 
               <TableBody>
                 {projectsQuery.data.map((project) => (
-                  <TableRow
-                    key={project.id}
-                    hover
-                  >
-                    <TableCell
-                      sx={dataTablePrimaryCellSx}
-                    >
+                  <TableRow key={project.id} hover>
+                    <TableCell sx={dataTablePrimaryCellSx}>
                       <Typography
                         variant="body2"
                         sx={{
@@ -136,15 +106,15 @@ function ProjectsPage() {
                             color="text.secondary"
                             noWrap
                             sx={{
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
                             }}
                           >
                             {project.description}
                           </Typography>
                         </Tooltip>
                       ) : (
-                        '—'
+                        "—"
                       )}
                     </TableCell>
 
@@ -152,28 +122,25 @@ function ProjectsPage() {
                       <Chip
                         label={project.status}
                         size="small"
+                        color={getProjectStatusColor(project.status)}
                       />
                     </TableCell>
 
                     <TableCell>
-                      {new Date(
-                        project.startDate,
-                      ).toLocaleDateString()}
+                      {new Date(project.startDate).toLocaleDateString()}
                     </TableCell>
 
                     <TableCell>
                       {project.endDate
-                        ? new Date(
-                          project.endDate,
-                        ).toLocaleDateString()
-                        : '—'}
+                        ? new Date(project.endDate).toLocaleDateString()
+                        : "—"}
                     </TableCell>
                     <TableCell sx={dataTableActionsCellSx}>
                       <Tooltip title="View project">
                         <IconButton
                           onClick={() =>
                             navigate({
-                              to: '/projects/$projectId',
+                              to: "/projects/$projectId",
                               params: {
                                 projectId: String(project.id),
                               },
@@ -206,5 +173,5 @@ function ProjectsPage() {
         )}
       </Paper>
     </Box>
-  )
+  );
 }

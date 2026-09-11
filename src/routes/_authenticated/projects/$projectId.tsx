@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import EditIcon from "@mui/icons-material/Edit";
 import {
   Avatar,
   AvatarGroup,
@@ -22,8 +23,10 @@ import {
   pageHeaderTitleSx,
 } from "../../../components/page/pageStyles";
 import { getProject } from "../../../features/projects/api/projectApi";
+import { EditProjectDialog } from "../../../features/projects/components/EditProjectDialog";
 import { ProjectMembersDialog } from "../../../features/projects/components/ProjectMembersDialog";
 import { useProjectAccess } from "../../../features/projects/hooks/useProjectAccess";
+import { getProjectStatusColor } from "../../../features/projects/utils/projectStatus";
 
 export const Route = createFileRoute("/_authenticated/projects/$projectId")({
   component: ProjectDetailsPage,
@@ -33,11 +36,14 @@ function ProjectDetailsPage() {
   const { projectId } = Route.useParams();
 
   const [membersDialogOpen, setMembersDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   const projectQuery = useQuery({
     queryKey: ["projects", Number(projectId)],
     queryFn: () => getProject(Number(projectId)),
   });
+
+  const projectAccessQuery = useProjectAccess(Number(projectId));
 
   if (projectQuery.isPending) {
     return (
@@ -55,13 +61,7 @@ function ProjectDetailsPage() {
     );
   }
 
-  const projectAccessQuery = useProjectAccess(Number(projectId));
-
   const canUpdate = projectAccessQuery.can("PROJECT_UPDATE");
-
-  const canManageMembers = projectAccessQuery.can("PROJECT_MANAGE_MEMBERS");
-
-  const canDelete = projectAccessQuery.can("PROJECT_DELETE");
 
   const project = projectQuery.data;
   const startDate = new Date(project.startDate).toLocaleDateString();
@@ -81,9 +81,23 @@ function ProjectDetailsPage() {
               gap: 2,
             }}
           >
-            <Typography variant="h5" sx={pageHeaderTitleSx}>
-              {project.name}
-            </Typography>
+            <Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}>
+              <Typography variant="h5" sx={pageHeaderTitleSx}>
+                {project.name}
+              </Typography>
+
+              {canUpdate && (
+                <Tooltip title="Edit project">
+                  <IconButton
+                    size="small"
+                    aria-label="Edit project"
+                    onClick={() => setEditDialogOpen(true)}
+                  >
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </Stack>
 
             {project.members.length > 0 && (
               <Stack
@@ -120,7 +134,11 @@ function ProjectDetailsPage() {
           </Stack>
 
           <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-            <Chip label={project.status} size="small" />
+            <Chip
+              label={project.status}
+              size="small"
+              color={getProjectStatusColor(project.status)}
+            />
 
             <Typography variant="body2" color="text.secondary">
               {endDate ? `${startDate} - ${endDate}` : startDate}
@@ -151,6 +169,12 @@ function ProjectDetailsPage() {
         open={membersDialogOpen}
         members={project.members}
         onClose={() => setMembersDialogOpen(false)}
+      />
+
+      <EditProjectDialog
+        open={editDialogOpen}
+        project={project}
+        onClose={() => setEditDialogOpen(false)}
       />
     </Box>
   );
