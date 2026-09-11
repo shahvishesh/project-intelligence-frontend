@@ -5,6 +5,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import EditIcon from "@mui/icons-material/Edit";
+import PeopleIcon from "@mui/icons-material/People";
 import {
   Avatar,
   AvatarGroup,
@@ -27,6 +28,8 @@ import { EditProjectDialog } from "../../../features/projects/components/EditPro
 import { ProjectMembersDialog } from "../../../features/projects/components/ProjectMembersDialog";
 import { useProjectAccess } from "../../../features/projects/hooks/useProjectAccess";
 import { getProjectStatusColor } from "../../../features/projects/utils/projectStatus";
+import { useAvailableProjectMembers } from "../../../features/projects/hooks/useAvailableProjectMembers";
+import { ManageProjectMembersDialog } from "../../../features/projects/components/ManageProjectMembersDialog";
 
 export const Route = createFileRoute("/_authenticated/projects/$projectId")({
   component: ProjectDetailsPage,
@@ -37,6 +40,7 @@ function ProjectDetailsPage() {
 
   const [membersDialogOpen, setMembersDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [manageMembersDialogOpen, setManageMembersDialogOpen] = useState(false);
 
   const projectQuery = useQuery({
     queryKey: ["projects", Number(projectId)],
@@ -44,6 +48,7 @@ function ProjectDetailsPage() {
   });
 
   const projectAccessQuery = useProjectAccess(Number(projectId));
+  const availableMembersQuery = useAvailableProjectMembers(Number(projectId));
 
   if (projectQuery.isPending) {
     return (
@@ -62,6 +67,7 @@ function ProjectDetailsPage() {
   }
 
   const canUpdate = projectAccessQuery.can("PROJECT_UPDATE");
+  const canManageMembers = projectAccessQuery.can("PROJECT_MANAGE_MEMBERS");
 
   const project = projectQuery.data;
   const startDate = new Date(project.startDate).toLocaleDateString();
@@ -99,38 +105,48 @@ function ProjectDetailsPage() {
               )}
             </Stack>
 
-            {project.members.length > 0 && (
-              <Stack
-                direction="row"
-                spacing={1.5}
-                sx={{ alignItems: "center" }}
-              >
-                <AvatarGroup
-                  max={5}
-                  sx={{
-                    justifyContent: "flex-start",
-                  }}
-                >
-                  {project.members.map((member) => (
-                    <Tooltip key={member.userId} title={member.name}>
-                      <Avatar alt={member.name}>
-                        {member.name.charAt(0).toUpperCase()}
-                      </Avatar>
-                    </Tooltip>
-                  ))}
-                </AvatarGroup>
-
-                <Tooltip title="View members">
+            <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
+              {canManageMembers && (
+                <Tooltip title="Manage members">
                   <IconButton
                     size="small"
-                    aria-label="View members"
-                    onClick={() => setMembersDialogOpen(true)}
+                    aria-label="Manage members"
+                    onClick={() => setManageMembersDialogOpen(true)}
                   >
-                    <ArrowForwardIcon fontSize="small" />
+                    <PeopleIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
-              </Stack>
-            )}
+              )}
+
+              {project.members.length > 0 && (
+                <>
+                  <AvatarGroup
+                    max={5}
+                    sx={{
+                      justifyContent: "flex-start",
+                    }}
+                  >
+                    {project.members.map((member) => (
+                      <Tooltip key={member.userId} title={member.name}>
+                        <Avatar alt={member.name}>
+                          {member.name.charAt(0).toUpperCase()}
+                        </Avatar>
+                      </Tooltip>
+                    ))}
+                  </AvatarGroup>
+
+                  <Tooltip title="View members">
+                    <IconButton
+                      size="small"
+                      aria-label="View members"
+                      onClick={() => setMembersDialogOpen(true)}
+                    >
+                      <ArrowForwardIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                </>
+              )}
+            </Stack>
           </Stack>
 
           <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
@@ -175,6 +191,13 @@ function ProjectDetailsPage() {
         open={editDialogOpen}
         project={project}
         onClose={() => setEditDialogOpen(false)}
+      />
+
+      <ManageProjectMembersDialog
+        open={manageMembersDialogOpen}
+        project={project}
+        availableMembers={availableMembersQuery.data ?? []}
+        onClose={() => setManageMembersDialogOpen(false)}
       />
     </Box>
   );

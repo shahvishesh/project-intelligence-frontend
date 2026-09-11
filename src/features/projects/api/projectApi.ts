@@ -125,3 +125,48 @@ export async function updateProject(
 
   return response.data.data;
 }
+
+export interface UpdateProjectMembersRequest {
+  projectManagers: number[];
+  projectMembers: number[];
+}
+
+export interface UpdateProjectMembersResponse {
+  message: string;
+  data: {
+    projectId: number;
+    members: ProjectMember[];
+  };
+}
+
+export async function updateProjectMembers(
+  projectId: number,
+  data: UpdateProjectMembersRequest,
+): Promise<UpdateProjectMembersResponse["data"]> {
+  const response = await apiClient.patch<UpdateProjectMembersResponse>(
+    `/projects/${projectId}/members`,
+    data,
+  );
+
+  return response.data.data;
+}
+
+export interface AvailableProjectMember {
+  id: number;
+  name: string;
+  email: string;
+}
+
+export interface AvailableProjectMembersResponse {
+  data: AvailableProjectMember[];
+}
+
+export async function getAvailableProjectMembers(
+  projectId: number,
+): Promise<AvailableProjectMember[]> {
+  const response = await apiClient.get<AvailableProjectMembersResponse>(
+    `/projects/${projectId}/available-members`,
+  );
+
+  return response.data.data;
+}
