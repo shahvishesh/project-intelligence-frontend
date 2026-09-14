@@ -217,3 +217,13 @@ export async function getCreateProjectAvailableMembers(): Promise<
 
   return response.data.data;
 }
+
+export async function deleteProject(
+  projectId: number,
+): Promise<{ message: string }> {
+  const response = await apiClient.delete<{
+    message: string;
+  }>(`/projects/${projectId}`);
+
+  return response.data;
+}
