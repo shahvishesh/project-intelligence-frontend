@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 
 import type { Dayjs } from "dayjs";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import {
   Autocomplete,
   Box,
@@ -25,10 +25,23 @@ import {
   createProject,
   type CreateProjectRequest,
 } from "../../../features/projects/api/projectApi";
+import { getCurrentUser } from "../../../features/auth/api/authApi";
 import { useCreateProjectAvailableMembers } from "../../../features/projects/hooks/useCreateProjectAvailableMembers";
 import { queryClient } from "../../../app/queryClient";
 
 export const Route = createFileRoute("/_authenticated/projects/create")({
+  beforeLoad: async ({ context }) => {
+    const currentUser = await context.queryClient.query({
+      queryKey: ["auth", "me"],
+      queryFn: getCurrentUser,
+    });
+
+    if (!currentUser.systemPermissions.includes("PROJECT_CREATE")) {
+      throw redirect({
+        to: "/forbidden",
+      });
+    }
+  },
   component: CreateProjectPage,
 });
 
