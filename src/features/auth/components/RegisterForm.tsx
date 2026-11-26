@@ -131,6 +131,13 @@ export function RegisterForm() {
                             size="large"
                             fullWidth
                             disabled={registerMutation.isPending}
+                            sx={{
+                                bgcolor: 'brand.cta',
+                                color: 'secondary.contrastText',
+                                '&:hover': {
+                                    bgcolor: 'brand.ctaHover',
+                                },
+                            }}
                         >
                             {registerMutation.isPending
                                 ? 'Creating account...'
@@ -141,13 +148,17 @@ export function RegisterForm() {
 
                 <Button
                     variant="text"
+                    sx={{ color: 'text.secondary' }}
                     onClick={() => {
                         navigate({
                             to: '/auth/login',
                         })
                     }}
                 >
-                    Already have an account? Sign in
+                    Already have an account?
+                    <Box component="span" sx={{ color: 'brand.cta', ml: 0.5 }}>
+                        Sign in
+                    </Box>
                 </Button>
             </Stack>
         </Box>

@@ -21,6 +21,12 @@ import {
   dialogTitleSx,
 } from "../../../components/page/pageStyles";
 import {
+  autocompletePopperProps,
+  autocompletePopupPaperSx,
+  autocompletePopupListboxSx,
+  autocompleteOptionCheckboxSx,
+} from "../../../components/form/autocompleteStyles";
+import {
   updateProjectMembers,
   type AvailableProjectMember,
   type ProjectDetails,
@@ -131,6 +137,14 @@ export function ManageProjectMembersDialog({
       }}
       fullWidth
       maxWidth="sm"
+      sx={{
+        "& .MuiDialog-paper": {
+          backgroundColor: "surface.content",
+        },
+        "& .MuiOutlinedInput-root": {
+          backgroundColor: "surface.content",
+        },
+      }}
     >
       <DialogTitle sx={dialogHeaderSx}>
         <Stack spacing={0.25}>
@@ -160,6 +174,11 @@ export function ManageProjectMembersDialog({
                   disableCloseOnSelect
                   options={availableMembers}
                   value={selectedMembers}
+                  slotProps={{
+                    popper: autocompletePopperProps,
+                    paper: { sx: autocompletePopupPaperSx },
+                    listbox: { sx: autocompletePopupListboxSx },
+                  }}
                   onChange={(_, values) => {
                     field.onChange(values.map((member) => member.id));
                   }}
@@ -168,7 +187,10 @@ export function ManageProjectMembersDialog({
                   }
                   renderOption={(props, member, { selected }) => (
                     <li {...props}>
-                      <Checkbox checked={selected} sx={{ mr: 1 }} />
+                      <Checkbox
+                        checked={selected}
+                        sx={autocompleteOptionCheckboxSx}
+                      />
                       {`${member.name} (${member.email})`}
                     </li>
                   )}
@@ -218,6 +240,11 @@ export function ManageProjectMembersDialog({
                   disableCloseOnSelect
                   options={availableMembers}
                   value={selectedMembers}
+                  slotProps={{
+                    popper: autocompletePopperProps,
+                    paper: { sx: autocompletePopupPaperSx },
+                    listbox: { sx: autocompletePopupListboxSx },
+                  }}
                   onChange={(_, values) => {
                     field.onChange(values.map((member) => member.id));
                   }}
@@ -226,7 +253,10 @@ export function ManageProjectMembersDialog({
                   }
                   renderOption={(props, member, { selected }) => (
                     <li {...props}>
-                      <Checkbox checked={selected} sx={{ mr: 1 }} />
+                      <Checkbox
+                        checked={selected}
+                        sx={autocompleteOptionCheckboxSx}
+                      />
                       {`${member.name} (${member.email})`}
                     </li>
                   )}
@@ -258,8 +288,13 @@ export function ManageProjectMembersDialog({
         )}
       </DialogContent>
 
-      <DialogActions>
-        <Button onClick={onClose} disabled={updateMembersMutation.isPending}>
+      <DialogActions sx={{ px: 3, pb: 2 }}>
+        <Button
+          variant="text"
+          sx={{ color: "brand.cta" }}
+          onClick={onClose}
+          disabled={updateMembersMutation.isPending}
+        >
           Cancel
         </Button>
 
@@ -267,6 +302,13 @@ export function ManageProjectMembersDialog({
           variant="contained"
           onClick={handleSubmit(onSubmit)}
           loading={updateMembersMutation.isPending}
+          sx={{
+            bgcolor: "brand.cta",
+            color: "secondary.contrastText",
+            "&:hover": {
+              bgcolor: "brand.ctaHover",
+            },
+          }}
         >
           Save changes
         </Button>

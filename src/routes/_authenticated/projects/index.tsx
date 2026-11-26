@@ -3,7 +3,6 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
   Box,
   Chip,
-  Paper,
   Stack,
   Table,
   TableBody,
@@ -24,11 +23,7 @@ import {
   dataTableHeadRowSx,
   dataTablePrimaryCellSx,
 } from "../../../components/table/tableStyles";
-import {
-  pageContentPaperSx,
-  pageHeaderPaperSx,
-  pageHeaderTitleSx,
-} from "../../../components/page/pageStyles";
+import { pageHeaderTitleSx } from "../../../components/page/pageStyles";
 import { getProjects } from "../../../features/projects/api/projectApi";
 import { getProjectStatusColor } from "../../../features/projects/utils/projectStatus";
 import { useAuthorization } from "../../../features/auth/hooks/useAuthorization";
@@ -48,7 +43,13 @@ function ProjectsPage() {
 
   return (
     <Box>
-      <Paper variant="outlined" sx={pageHeaderPaperSx}>
+      <Box
+        sx={{
+          px: { xs: 1, sm: 2 },
+          pt: { xs: 1, sm: 2 },
+          pb: 3,
+        }}
+      >
         <Stack
           direction="row"
           spacing={2}
@@ -70,6 +71,13 @@ function ProjectsPage() {
           {can("PROJECT_CREATE") && (
             <Button
               variant="contained"
+              sx={{
+                bgcolor: "brand.cta",
+                color: "secondary.contrastText",
+                "&:hover": {
+                  bgcolor: "brand.ctaHover",
+                },
+              }}
               onClick={() =>
                 navigate({
                   to: "/projects/create",
@@ -80,9 +88,9 @@ function ProjectsPage() {
             </Button>
           )}
         </Stack>
-      </Paper>
+      </Box>
 
-      <Paper variant="outlined" sx={pageContentPaperSx}>
+      <Box>
         {projectsQuery.isPending && (
           <Box sx={{ p: 3 }}>
             <Typography color="text.secondary">Loading projects...</Typography>
@@ -148,6 +156,19 @@ function ProjectsPage() {
                         label={project.status}
                         size="small"
                         color={getProjectStatusColor(project.status)}
+                        sx={
+                          project.status === "ACTIVE"
+                            ? {
+                                bgcolor: "status.active",
+                                color: "status.activeText",
+                              }
+                            : project.status === "PLANNED"
+                              ? {
+                                  bgcolor: "status.planned",
+                                  color: "status.plannedText",
+                                }
+                              : undefined
+                        }
                       />
                     </TableCell>
 
@@ -196,7 +217,7 @@ function ProjectsPage() {
             </Table>
           </TableContainer>
         )}
-      </Paper>
+      </Box>
     </Box>
   );
 }

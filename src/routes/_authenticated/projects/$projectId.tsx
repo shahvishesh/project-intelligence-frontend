@@ -14,17 +14,12 @@ import {
   Chip,
   Divider,
   IconButton,
-  Paper,
   Stack,
   Tooltip,
   Typography,
 } from "@mui/material";
 
-import {
-  pageContentPaperSx,
-  pageHeaderPaperSx,
-  pageHeaderTitleSx,
-} from "../../../components/page/pageStyles";
+import { pageHeaderTitleSx } from "../../../components/page/pageStyles";
 import {
   deleteProject,
   getProject,
@@ -99,7 +94,13 @@ function ProjectDetailsPage() {
 
   return (
     <Box>
-      <Paper variant="outlined" sx={pageHeaderPaperSx}>
+      <Box
+        sx={{
+          px: { xs: 1, sm: 2 },
+          pt: { xs: 1, sm: 2 },
+          pb: 2,
+        }}
+      >
         <Stack spacing={0.25}>
           <Stack
             direction="row"
@@ -120,6 +121,12 @@ function ProjectDetailsPage() {
                     size="small"
                     aria-label="Edit project"
                     onClick={() => setEditDialogOpen(true)}
+                    sx={{
+                      "&:hover": {
+                        color: "brand.cta",
+                        bgcolor: "rgba(225, 99, 40, 0.12)",
+                      },
+                    }}
                   >
                     <EditIcon fontSize="small" />
                   </IconButton>
@@ -127,7 +134,15 @@ function ProjectDetailsPage() {
               )}
 
               {canUpdate && canDelete && (
-                <Divider orientation="vertical" flexItem sx={{ mx: 0.25 }} />
+                <Divider
+                  orientation="vertical"
+                  flexItem
+                  sx={{
+                    mx: 0.25,
+                    borderRightWidth: 2,
+                    borderColor: "surface.border",
+                  }}
+                />
               )}
 
               {canDelete && (
@@ -151,6 +166,12 @@ function ProjectDetailsPage() {
                     size="small"
                     aria-label="Manage members"
                     onClick={() => setManageMembersDialogOpen(true)}
+                    sx={{
+                      "&:hover": {
+                        color: "brand.cta",
+                        bgcolor: "rgba(225, 99, 40, 0.12)",
+                      },
+                    }}
                   >
                     <PeopleIcon fontSize="small" />
                   </IconButton>
@@ -179,6 +200,12 @@ function ProjectDetailsPage() {
                       size="small"
                       aria-label="View members"
                       onClick={() => setMembersDialogOpen(true)}
+                      sx={{
+                        "&:hover": {
+                          color: "brand.cta",
+                          bgcolor: "rgba(225, 99, 40, 0.12)",
+                        },
+                      }}
                     >
                       <ArrowForwardIcon fontSize="small" />
                     </IconButton>
@@ -193,6 +220,19 @@ function ProjectDetailsPage() {
               label={project.status}
               size="small"
               color={getProjectStatusColor(project.status)}
+              sx={
+                project.status === "ACTIVE"
+                  ? {
+                      bgcolor: "status.active",
+                      color: "status.activeText",
+                    }
+                  : project.status === "PLANNED"
+                    ? {
+                        bgcolor: "status.planned",
+                        color: "status.plannedText",
+                      }
+                    : undefined
+              }
             />
 
             <Typography variant="body2" color="text.secondary">
@@ -200,10 +240,18 @@ function ProjectDetailsPage() {
             </Typography>
           </Stack>
         </Stack>
-      </Paper>
+      </Box>
 
-      <Paper variant="outlined" sx={pageContentPaperSx}>
-        <Stack spacing={3} sx={{ p: 3 }}>
+      <Divider
+        sx={{
+          mx: { xs: 1, sm: 2 },
+          mb: 2,
+          borderColor: "surface.border",
+        }}
+      />
+
+      <Box sx={{ px: { xs: 1, sm: 2 }, pb: 3 }}>
+        <Stack spacing={3}>
           <Box>
             <Stack spacing={1.5}>
               <Box>
@@ -218,7 +266,7 @@ function ProjectDetailsPage() {
             </Stack>
           </Box>
         </Stack>
-      </Paper>
+      </Box>
 
       <ProjectMembersDialog
         open={membersDialogOpen}

@@ -1,45 +1,39 @@
-import { Box } from '@mui/material'
+import { Box } from "@mui/material";
 
-import { AppNavbar } from './AppNavbar'
-import { AppSidebar } from './AppSidebar'
+import { AppSidebar } from "./AppSidebar";
 
 interface AppLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
-export function AppLayout({
-  children,
-}: AppLayoutProps) {
+export function AppLayout({ children }: AppLayoutProps) {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        bgcolor: 'background.default',
+        minHeight: "100vh",
+        display: "flex",
+        bgcolor: "background.default",
       }}
     >
-      <AppNavbar />
+      <AppSidebar />
 
       <Box
+        component="main"
         sx={{
-          display: 'flex',
           flex: 1,
+          p: 3,
+          bgcolor: "surface.content",
+          mt: 2,
+          mr: 2,
+          // border: "1px solid",
+          // borderColor: "surface.border",
+          borderTopLeftRadius: 9,
+          borderTopRightRadius: 9,
+          overflow: "hidden",
         }}
       >
-        <AppSidebar />
-
-        <Box
-          component="main"
-          sx={{
-            flex: 1,
-            p: 3,
-            bgcolor: '#f7f8fa',
-          }}
-        >
-          {children}
-        </Box>
+        {children}
       </Box>
     </Box>
-  )
+  );
 }

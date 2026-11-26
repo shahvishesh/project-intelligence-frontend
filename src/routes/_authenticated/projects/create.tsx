@@ -8,7 +8,6 @@ import {
   Box,
   Button,
   Checkbox,
-  Paper,
   Stack,
   TextField,
   Typography,
@@ -16,15 +15,17 @@ import {
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
-import {
-  pageContentPaperSx,
-  pageHeaderPaperSx,
-  pageHeaderTitleSx,
-} from "../../../components/page/pageStyles";
+import { pageHeaderTitleSx } from "../../../components/page/pageStyles";
 import {
   createProject,
   type CreateProjectRequest,
 } from "../../../features/projects/api/projectApi";
+import {
+  autocompletePopperProps,
+  autocompletePopupPaperSx,
+  autocompletePopupListboxSx,
+  autocompleteOptionCheckboxSx,
+} from "../../../components/form/autocompleteStyles";
 import { getCurrentUser } from "../../../features/auth/api/authApi";
 import { useCreateProjectAvailableMembers } from "../../../features/projects/hooks/useCreateProjectAvailableMembers";
 import { queryClient } from "../../../app/queryClient";
@@ -142,7 +143,13 @@ function CreateProjectPage() {
 
   return (
     <Box>
-      <Paper variant="outlined" sx={pageHeaderPaperSx}>
+      <Box
+        sx={{
+          px: { xs: 1, sm: 2 },
+          pt: { xs: 1, sm: 2 },
+          pb: 3,
+        }}
+      >
         <Stack spacing={0.25}>
           <Typography variant="h5" sx={pageHeaderTitleSx}>
             Create project
@@ -152,10 +159,18 @@ function CreateProjectPage() {
             Create a new project.
           </Typography>
         </Stack>
-      </Paper>
+      </Box>
 
-      <Paper variant="outlined" sx={pageContentPaperSx}>
-        <Stack spacing={2.5} sx={{ p: 3 }}>
+      <Box
+        sx={{
+          px: { xs: 1, sm: 2 },
+          pb: 3,
+          "& .MuiOutlinedInput-root": {
+            backgroundColor: "surface.content",
+          },
+        }}
+      >
+        <Stack spacing={2.5}>
           <TextField
             label="Project name"
             fullWidth
@@ -245,6 +260,11 @@ function CreateProjectPage() {
                   disableCloseOnSelect
                   options={availableMembers}
                   value={selectedMembers}
+                  slotProps={{
+                    popper: autocompletePopperProps,
+                    paper: { sx: autocompletePopupPaperSx },
+                    listbox: { sx: autocompletePopupListboxSx },
+                  }}
                   onChange={(_, values) => {
                     field.onChange(values.map((member) => member.id));
                   }}
@@ -253,7 +273,10 @@ function CreateProjectPage() {
                   }
                   renderOption={(props, member, { selected }) => (
                     <li {...props}>
-                      <Checkbox checked={selected} sx={{ mr: 1 }} />
+                      <Checkbox
+                        checked={selected}
+                        sx={autocompleteOptionCheckboxSx}
+                      />
                       {`${member.name} (${member.email})`}
                     </li>
                   )}
@@ -296,6 +319,11 @@ function CreateProjectPage() {
                   disableCloseOnSelect
                   options={availableMembers}
                   value={selectedMembers}
+                  slotProps={{
+                    popper: autocompletePopperProps,
+                    paper: { sx: autocompletePopupPaperSx },
+                    listbox: { sx: autocompletePopupListboxSx },
+                  }}
                   onChange={(_, values) => {
                     field.onChange(values.map((member) => member.id));
                   }}
@@ -304,7 +332,10 @@ function CreateProjectPage() {
                   }
                   renderOption={(props, member, { selected }) => (
                     <li {...props}>
-                      <Checkbox checked={selected} sx={{ mr: 1 }} />
+                      <Checkbox
+                        checked={selected}
+                        sx={autocompleteOptionCheckboxSx}
+                      />
                       {`${member.name} (${member.email})`}
                     </li>
                   )}
@@ -347,6 +378,8 @@ function CreateProjectPage() {
             }}
           >
             <Button
+              variant="text"
+              sx={{ color: "brand.cta" }}
               onClick={() =>
                 navigate({
                   to: "/projects",
@@ -361,12 +394,19 @@ function CreateProjectPage() {
               variant="contained"
               onClick={handleSubmit(onSubmit)}
               loading={createProjectMutation.isPending}
+              sx={{
+                bgcolor: "brand.cta",
+                color: "secondary.contrastText",
+                "&:hover": {
+                  bgcolor: "brand.ctaHover",
+                },
+              }}
             >
               Create project
             </Button>
           </Stack>
         </Stack>
-      </Paper>
+      </Box>
     </Box>
   );
 }

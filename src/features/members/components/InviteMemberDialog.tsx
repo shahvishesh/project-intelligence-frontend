@@ -25,6 +25,8 @@ import {
 import { queryClient } from '../../../app/queryClient'
 import { toast } from 'react-toastify'
 import { dialogContentSx, dialogHeaderSx, dialogTitleSx } from '../../../components/page/pageStyles'
+import { autocompleteOptionCheckboxSx } from '../../../components/form/autocompleteStyles'
+import { formatRoleLabel } from '../roleUtils'
 
 interface InviteMemberDialogProps {
     open: boolean
@@ -97,6 +99,14 @@ export function InviteMemberDialog({
             onClose={handleClose}
             fullWidth
             maxWidth="sm"
+            sx={{
+                '& .MuiDialog-paper': {
+                    backgroundColor: 'surface.content',
+                },
+                '& .MuiOutlinedInput-root': {
+                    backgroundColor: 'surface.content',
+                },
+            }}
         >
             <DialogTitle sx={dialogHeaderSx}>
                 <Stack spacing={0.25}>
@@ -153,8 +163,39 @@ export function InviteMemberDialog({
                                     multiple
                                     label="Roles"
                                     value={field.value}
+                                    MenuProps={{
+                                        slotProps: {
+                                            paper: {
+                                                sx: {
+                                                    mt: 1,
+                                                    bgcolor: 'surface.content',
+                                                    border: '1px solid',
+                                                    borderColor: 'surface.border',
+                                                    borderRadius: 2,
+                                                    boxShadow:
+                                                        '0 8px 24px rgba(19, 19, 19, 0.12)',
+                                                },
+                                            },
+                                            list: {
+                                                sx: {
+                                                    p: 1,
+                                                    '& .MuiMenuItem-root': {
+                                                        mx: 0.5,
+                                                        my: 0.5,
+                                                        borderRadius: 1,
+                                                        '&:hover, &.Mui-selected, &.Mui-selected:hover, &.Mui-focusVisible': {
+                                                            bgcolor: 'rgba(225, 99, 40, 0.12)',
+                                                            color: 'brand.cta',
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    }}
                                     renderValue={(selected) =>
-                                        selected.join(', ')
+                                        selected
+                                            .map(formatRoleLabel)
+                                            .join(', ')
                                     }
                                 >
                                     {rolesQuery.data?.map((role) => (
@@ -166,10 +207,13 @@ export function InviteMemberDialog({
                                                 checked={field.value.includes(
                                                     role.name,
                                                 )}
+                                                sx={autocompleteOptionCheckboxSx}
                                             />
 
                                             <ListItemText
-                                                primary={role.name}
+                                                primary={formatRoleLabel(
+                                                    role.name,
+                                                )}
                                             />
                                         </MenuItem>
                                     ))}
@@ -192,6 +236,8 @@ export function InviteMemberDialog({
 
             <DialogActions sx={{ px: 3, pb: 2 }}>
                 <Button
+                    variant="text"
+                    sx={{ color: 'brand.cta' }}
                     onClick={handleClose}
                     disabled={inviteMutation.isPending}
                 >
@@ -205,6 +251,13 @@ export function InviteMemberDialog({
                         inviteMutation.isPending ||
                         rolesQuery.isLoading
                     }
+                    sx={{
+                        bgcolor: 'brand.cta',
+                        color: 'secondary.contrastText',
+                        '&:hover': {
+                            bgcolor: 'brand.ctaHover',
+                        },
+                    }}
                 >
                     {inviteMutation.isPending
                         ? 'Sending...'

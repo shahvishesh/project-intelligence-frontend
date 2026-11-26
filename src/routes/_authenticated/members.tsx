@@ -1,12 +1,11 @@
-import { useState } from 'react'
+import { useState } from "react";
 
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import {
   Box,
   Button,
   Chip,
-  Paper,
   Stack,
   Table,
   TableBody,
@@ -15,117 +14,125 @@ import {
   TableHead,
   TableRow,
   Typography,
-} from '@mui/material'
+} from "@mui/material";
 
-import { getInvitations, resendInvitation } from '../../features/members/api/membersApi'
-import { InviteMemberDialog } from '../../features/members/components/InviteMemberDialog'
-import { toast } from 'react-toastify'
-import { getCurrentUser } from '../../features/auth/api/authApi'
-import { dataTableActionsCellSx, dataTableActionsStackSx, dataTableContainerSx, dataTableEmptyStateCellSx, dataTableHeadRowSx, dataTablePrimaryCellSx } from '../../components/table/tableStyles'
-import { pageHeaderPaperSx, pageHeaderTitleSx, pageContentPaperSx } from '../../components/page/pageStyles'
+import {
+  getInvitations,
+  resendInvitation,
+} from "../../features/members/api/membersApi";
+import { InviteMemberDialog } from "../../features/members/components/InviteMemberDialog";
+import { formatRoleLabel } from "../../features/members/roleUtils";
+import { toast } from "react-toastify";
+import { getCurrentUser } from "../../features/auth/api/authApi";
+import {
+  dataTableActionsCellSx,
+  dataTableActionsStackSx,
+  dataTableContainerSx,
+  dataTableEmptyStateCellSx,
+  dataTableHeadRowSx,
+  dataTablePrimaryCellSx,
+} from "../../components/table/tableStyles";
+import { pageHeaderTitleSx } from "../../components/page/pageStyles";
 
-export const Route = createFileRoute('/_authenticated/members')({
+export const Route = createFileRoute("/_authenticated/members")({
   beforeLoad: async ({ context }) => {
-    const currentUser =
-      await context.queryClient.query({
-        queryKey: ['auth', 'me'],
-        queryFn: getCurrentUser,
-      })
+    const currentUser = await context.queryClient.query({
+      queryKey: ["auth", "me"],
+      queryFn: getCurrentUser,
+    });
 
     const canViewMembers =
-      currentUser.systemPermissions.includes(
-        'MEMBER_VIEW',
-      )
+      currentUser.systemPermissions.includes("MEMBER_VIEW");
 
     if (!canViewMembers) {
       throw redirect({
-        to: '/forbidden',
-      })
+        to: "/forbidden",
+      });
     }
   },
 
   component: MembersPage,
-})
+});
 
 function MembersPage() {
-  const [inviteDialogOpen, setInviteDialogOpen] =
-    useState(false)
+  const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
 
   const invitationsQuery = useQuery({
-    queryKey: ['invitations'],
+    queryKey: ["invitations"],
     queryFn: getInvitations,
-  })
+  });
 
   const resendMutation = useMutation({
     mutationFn: resendInvitation,
 
     onMutate: (invitationId) => {
-      setResendingInvitationId(invitationId)
+      setResendingInvitationId(invitationId);
     },
 
     onSuccess: (response) => {
-      invitationsQuery.refetch()
+      invitationsQuery.refetch();
 
-      toast.success(response.message)
+      toast.success(response.message);
     },
 
     onError: (error) => {
-      toast.error(error.message)
+      toast.error(error.message);
     },
 
     onSettled: () => {
-      setResendingInvitationId(null)
+      setResendingInvitationId(null);
     },
-  })
+  });
 
-  const [resendingInvitationId, setResendingInvitationId] = useState<number | null>(null)
+  const [resendingInvitationId, setResendingInvitationId] = useState<
+    number | null
+  >(null);
 
   return (
     <>
       <Box>
-        <Paper
-          variant="outlined"
-          sx={pageHeaderPaperSx}
+        <Box
+          sx={{
+            px: { xs: 1, sm: 2 },
+            pt: { xs: 1, sm: 2 },
+            pb: 3,
+          }}
         >
           <Stack
-            direction={{ xs: 'column', sm: 'row' }}
+            direction={{ xs: "column", sm: "row" }}
             spacing={2}
             sx={{
-              justifyContent: 'space-between',
-              alignItems: { xs: 'stretch', sm: 'flex-start' },
+              justifyContent: "space-between",
+              alignItems: { xs: "stretch", sm: "flex-start" },
             }}
           >
             <Stack spacing={0.25}>
-              <Typography
-                variant="h5"
-                sx={pageHeaderTitleSx}
-              >
+              <Typography variant="h5" sx={pageHeaderTitleSx}>
                 Members
               </Typography>
 
-              <Typography
-                variant="body2"
-                color="text.secondary"
-              >
+              <Typography variant="body2" color="text.secondary">
                 Manage the members of your organization.
               </Typography>
             </Stack>
 
             <Button
               variant="contained"
+              sx={{
+                bgcolor: "brand.cta",
+                color: "secondary.contrastText",
+                "&:hover": {
+                  bgcolor: "brand.ctaHover",
+                },
+              }}
               onClick={() => setInviteDialogOpen(true)}
             >
               Invite member
             </Button>
           </Stack>
-        </Paper>
+        </Box>
 
-        <Paper
-          variant="outlined"
-          sx={
-            pageContentPaperSx
-          }
-        >
+        <Box>
           {invitationsQuery.isLoading && (
             <Box sx={{ p: 3 }}>
               <Typography color="text.secondary">
@@ -142,10 +149,7 @@ function MembersPage() {
             </Box>
           )}
 
-          <TableContainer
-            component={Box}
-            sx={dataTableContainerSx}
-          >
+          <TableContainer component={Box} sx={dataTableContainerSx}>
             <Table>
               <TableHead>
                 <TableRow sx={dataTableHeadRowSx}>
@@ -155,109 +159,96 @@ function MembersPage() {
                   <TableCell>Invited by</TableCell>
                   <TableCell>Invited</TableCell>
                   <TableCell>Expires</TableCell>
-                  <TableCell sx={dataTableActionsCellSx}>
-                    Actions
-                  </TableCell>
+                  <TableCell sx={dataTableActionsCellSx}>Actions</TableCell>
                 </TableRow>
               </TableHead>
 
               <TableBody>
-                {invitationsQuery.data?.map(
-                  (invitation) => (
-                    <TableRow
-                      key={invitation.id}
-                      hover
-                    >
-                      <TableCell
-                        sx={dataTablePrimaryCellSx}
+                {invitationsQuery.data?.map((invitation) => (
+                  <TableRow key={invitation.id} hover>
+                    <TableCell sx={dataTablePrimaryCellSx}>
+                      {invitation.email}
+                    </TableCell>
+
+                    <TableCell>
+                      <Stack
+                        direction="row"
+                        spacing={0.5}
+                        sx={{
+                          flexWrap: "wrap",
+                          gap: 0.5,
+                        }}
                       >
-                        {invitation.email}
-                      </TableCell>
+                        {invitation.roles.map((role) => (
+                          <Chip
+                            key={role.id}
+                            label={formatRoleLabel(role.name)}
+                            size="small"
+                          />
+                        ))}
+                      </Stack>
+                    </TableCell>
 
-                      <TableCell>
-                        <Stack
-                          direction="row"
-                          spacing={0.5}
-                          sx={{
-                            flexWrap: 'wrap',
-                            gap: 0.5,
-                          }}
-                        >
-                          {invitation.roles.map(
-                            (role) => (
-                              <Chip
-                                key={role.id}
-                                label={role.name}
-                                size="small"
-                              />
-                            ),
-                          )}
-                        </Stack>
-                      </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={invitation.status}
+                        size="small"
+                        color="default"
+                        sx={
+                          invitation.status === "PENDING"
+                            ? {
+                                bgcolor: "status.pending",
+                                color: "status.pendingText",
+                              }
+                            : invitation.status === "ACCEPTED"
+                              ? {
+                                  bgcolor: "status.accepted",
+                                  color: "status.acceptedText",
+                                }
+                              : undefined
+                        }
+                      />
+                    </TableCell>
 
-                      <TableCell>
-                        <Chip
-                          label={invitation.status}
-                          size="small"
-                          color={
-                            invitation.status ===
-                              'PENDING'
-                              ? 'warning'
-                              : 'default'
-                          }
-                        />
-                      </TableCell>
+                    <TableCell>{invitation.invitedBy.name}</TableCell>
 
-                      <TableCell>
-                        {invitation.invitedBy.name}
-                      </TableCell>
+                    <TableCell>
+                      {new Date(invitation.createdAt).toLocaleDateString()}
+                    </TableCell>
 
-                      <TableCell>
-                        {new Date(
-                          invitation.createdAt,
-                        ).toLocaleDateString()}
-                      </TableCell>
+                    <TableCell>
+                      {new Date(invitation.expiresAt).toLocaleDateString()}
+                    </TableCell>
 
-                      <TableCell>
-                        {new Date(
-                          invitation.expiresAt,
-                        ).toLocaleDateString()}
-                      </TableCell>
-
-                      <TableCell
-                        sx={dataTableActionsCellSx}
+                    <TableCell sx={dataTableActionsCellSx}>
+                      <Stack
+                        direction="row"
+                        spacing={1}
+                        sx={dataTableActionsStackSx}
                       >
-                        <Stack
-                          direction="row"
-                          spacing={1}
-                          sx={dataTableActionsStackSx}
-                        >
-                          {invitation.status ===
-                            'PENDING' && (
-                              <Button
-                                size="small"
-                                variant="contained"
-                                onClick={() =>
-                                  resendMutation.mutate(
-                                    invitation.id,
-                                  )
-                                }
-                                disabled={
-                                  resendingInvitationId ===
-                                  invitation.id
-                                }
-                              >
-                                {resendingInvitationId ===
-                                  invitation.id
-                                  ? 'Resending...'
-                                  : 'Resend'}
-                              </Button>
-                            )}
-                        </Stack>
-                      </TableCell>
-                    </TableRow>
-                  ),
-                )}
+                        {invitation.status === "PENDING" && (
+                          <Button
+                            size="small"
+                            sx={{
+                              bgcolor: "brand.cta",
+                              color: "secondary.contrastText",
+                              "&:hover": {
+                                bgcolor: "brand.ctaHover",
+                              },
+                            }}
+                            variant="contained"
+                            onClick={() => resendMutation.mutate(invitation.id)}
+                            disabled={resendingInvitationId === invitation.id}
+                          >
+                            {resendingInvitationId === invitation.id
+                              ? "Resending..."
+                              : "Resend"}
+                          </Button>
+                        )}
+                      </Stack>
+                    </TableCell>
+                  </TableRow>
+                ))}
 
                 {invitationsQuery.data?.length === 0 && (
                   <TableRow>
@@ -273,7 +264,7 @@ function MembersPage() {
               </TableBody>
             </Table>
           </TableContainer>
-        </Paper>
+        </Box>
       </Box>
 
       <InviteMemberDialog
@@ -281,5 +272,5 @@ function MembersPage() {
         onClose={() => setInviteDialogOpen(false)}
       />
     </>
-  )
+  );
 }

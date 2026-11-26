@@ -36,7 +36,17 @@ export function ProjectMembersDialog({
   );
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullWidth
+      maxWidth="sm"
+      sx={{
+        "& .MuiDialog-paper": {
+          backgroundColor: "surface.content",
+        },
+      }}
+    >
       <DialogTitle sx={dialogHeaderSx}>
         <Typography variant="h5" sx={dialogTitleSx}>
           Project members
@@ -69,7 +79,13 @@ export function ProjectMembersDialog({
                     spacing={1.5}
                     sx={{ alignItems: "center" }}
                   >
-                    <Avatar alt={member.name}>
+                    <Avatar
+                      alt={member.name}
+                      sx={{
+                        bgcolor: "brand.cta",
+                        color: "secondary.contrastText",
+                      }}
+                    >
                       {member.name.charAt(0).toUpperCase()}
                     </Avatar>
 
@@ -88,7 +104,7 @@ export function ProjectMembersDialog({
             )}
           </Box>
 
-          <Divider />
+          <Divider sx={{ borderColor: "surface.border" }} />
 
           <Box>
             <Typography
@@ -114,7 +130,13 @@ export function ProjectMembersDialog({
                     spacing={1.5}
                     sx={{ alignItems: "center" }}
                   >
-                    <Avatar alt={member.name}>
+                    <Avatar
+                      alt={member.name}
+                      sx={{
+                        bgcolor: "brand.cta",
+                        color: "secondary.contrastText",
+                      }}
+                    >
                       {member.name.charAt(0).toUpperCase()}
                     </Avatar>
 

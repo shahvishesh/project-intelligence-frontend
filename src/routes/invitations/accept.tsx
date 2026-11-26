@@ -242,6 +242,13 @@ function AcceptInvitationPage() {
                             disabled={
                                 acceptInvitationMutation.isPending
                             }
+                            sx={{
+                                bgcolor: 'brand.cta',
+                                color: 'secondary.contrastText',
+                                '&:hover': {
+                                    bgcolor: 'brand.ctaHover',
+                                },
+                            }}
                         >
                             {acceptInvitationMutation.isPending
                                 ? 'Accepting...'
